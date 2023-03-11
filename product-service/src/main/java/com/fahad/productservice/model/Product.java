@@ -1,26 +1,36 @@
 package com.fahad.productservice.model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.math.BigDecimal;
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity(name = "product")
-public class Product {
+@Entity
+@Table(name = "product")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Product implements Serializable {
+    private static final long serialVersionUID =1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
-    private String name;
-    private String description;
-    private BigDecimal price;
 
+    @Column(name = "name")
+    private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_fk", nullable = false)
+    private Category category;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "price")
+    private String price;
+
+    @Column(name = "status")
+    private String status;
 }

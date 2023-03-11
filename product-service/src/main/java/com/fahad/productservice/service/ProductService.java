@@ -1,15 +1,23 @@
 package com.fahad.productservice.service;
 
-import com.fahad.productservice.dto.ProductRequest;
-import com.fahad.productservice.dto.ProductResponse;
-import com.fahad.productservice.model.Product;
+import org.springframework.http.ResponseEntity;
 
-import java.util.List;
+import java.util.Map;
+
 
 public interface ProductService {
+    ResponseEntity<?> addNewProduct(Map<String, String> requestMap);
+
+    ResponseEntity<?> getAllProduct();
+
+    ResponseEntity<?> updateProduct(Map<String, String> requestMap);
 
 
-    void createProduct(ProductRequest productRequest);
+    ResponseEntity<?> deleteProduct(Integer id);
 
-    List<Product> getAllProducts();
+    ResponseEntity<?> updateStatus(Map<String, String>requestMap);
+
+    ResponseEntity<?> getByCategory(Integer id);
+
+    ResponseEntity<?> getProductById(Integer id);
 }
