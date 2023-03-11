@@ -2,11 +2,13 @@ package com.fahad.microservice.controller;
 
 
 import com.fahad.microservice.constent.CafeConstants;
+import com.fahad.microservice.feign.ProductFeignClient;
 import com.fahad.microservice.jwt.JwtFilter;
 import com.fahad.microservice.request.UserDTO;
 import com.fahad.microservice.service.UserService;
 import com.fahad.microservice.utils.CafeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -24,6 +26,10 @@ public class UserController {
 
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Lazy
+    @Autowired
+    private ProductFeignClient productFeignClient;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody Map<String, String> requestMap){
@@ -102,8 +108,9 @@ public class UserController {
 //        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
 
-    @GetMapping("/check")
-    String check(){
-       return "Gateway working fine !!!";
+    @GetMapping("/test")
+    String test(){
+        return userService.test();
     }
+
 }

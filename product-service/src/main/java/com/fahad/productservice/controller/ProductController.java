@@ -1,10 +1,8 @@
 package com.fahad.productservice.controller;
 
 import com.fahad.productservice.dto.ProductRequest;
-import com.fahad.productservice.dto.ProductResponse;
 import com.fahad.productservice.model.Product;
 import com.fahad.productservice.service.ProductService;
-import com.fahad.productservice.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +27,7 @@ public class ProductController {
 
     @GetMapping("/test")
     public String test() {
+
         return "Api working fine!!";
     }
 }

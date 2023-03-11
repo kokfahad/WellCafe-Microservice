@@ -2,6 +2,7 @@ package com.fahad.microservice.service.impl;
 
 
 import com.fahad.microservice.constent.CafeConstants;
+import com.fahad.microservice.feign.ProductFeignClient;
 import com.fahad.microservice.jwt.CustomerUserDetailsService;
 import com.fahad.microservice.jwt.JwtFilter;
 import com.fahad.microservice.jwt.JwtUtil;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -38,8 +38,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtFilter jwtFilter;
 
-//    @Autowired
-//    private EmailUtils emailUtils;
+    @Autowired
+    private ProductFeignClient productFeignClient;
 
 
     @Override
@@ -181,6 +181,11 @@ public class UserServiceImpl implements UserService {
            ex.printStackTrace();
         }
         return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public String test() {
+        return productFeignClient.test();
     }
 
 //    @Override
