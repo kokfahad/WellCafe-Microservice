@@ -1,7 +1,8 @@
 package com.fahad.productservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,7 +10,8 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "product")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product implements Serializable {
     private static final long serialVersionUID =1L;
 
