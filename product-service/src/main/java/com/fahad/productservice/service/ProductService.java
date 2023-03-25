@@ -1,23 +1,27 @@
 package com.fahad.productservice.service;
 
-import org.springframework.http.ResponseEntity;
+import com.fahad.productservice.dto.request.DashboardDTO;
+import com.fahad.productservice.dto.response.ProductDtoRes;
 
+import java.util.List;
 import java.util.Map;
 
 
 public interface ProductService {
-    ResponseEntity<?> addNewProduct(Map<String, String> requestMap);
+    String addNewProduct(Map<String, String> requestMap);
 
-    ResponseEntity<?> getAllProduct();
+    List<ProductDtoRes> getAllProduct();
 
-    ResponseEntity<?> updateProduct(Map<String, String> requestMap);
+    String updateProduct(Map<String, String> requestMap);
 
 
-    ResponseEntity<?> deleteProduct(Integer id);
+    String deleteProduct(Integer id);
 
-    ResponseEntity<?> updateStatus(Map<String, String>requestMap);
+    String updateStatus(Map<String, String>requestMap);
 
-    ResponseEntity<?> getByCategory(Integer id);
+    List<ProductDtoRes> getByCategory(Integer id);
 
-    ResponseEntity<?> getProductById(Integer id);
+    ProductDtoRes getProductById(Integer id);
+
+    DashboardDTO getDashboardData();
 }

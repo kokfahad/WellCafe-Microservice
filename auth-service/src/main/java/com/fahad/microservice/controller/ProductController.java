@@ -2,9 +2,9 @@ package com.fahad.microservice.controller;
 
 
 import com.fahad.microservice.constent.CafeConstants;
+import com.fahad.microservice.dto.ErrorResponse;
 import com.fahad.microservice.jwt.JwtFilter;
 import com.fahad.microservice.service.ProductService;
-import com.fahad.microservice.utils.CafeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +27,11 @@ public class ProductController {
             if (jwtFilter.isAdmin())
                 return productService.addNewProduct(requestMap);
             else
-                return new ResponseEntity<>(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(new ErrorResponse(CafeConstants.UNAUTHORIZED_ACCESS), HttpStatus.UNAUTHORIZED);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/update")
@@ -40,11 +40,11 @@ public class ProductController {
             if (jwtFilter.isAdmin())
                 return productService.updateProduct(requestMap);
             else
-                return new ResponseEntity<>(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(new ErrorResponse(CafeConstants.UNAUTHORIZED_ACCESS), HttpStatus.UNAUTHORIZED);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/delete/{id}")
@@ -53,11 +53,11 @@ public class ProductController {
             if (jwtFilter.isAdmin()) {
                 return productService.deleteProduct(id);
             } else
-                return new ResponseEntity<>(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(new ErrorResponse(CafeConstants.UNAUTHORIZED_ACCESS), HttpStatus.UNAUTHORIZED);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/updateStatus")
@@ -66,11 +66,11 @@ public class ProductController {
             if (jwtFilter.isAdmin())
                 return productService.updateStatus(requestMap);
             else
-                return new ResponseEntity<>(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(new ErrorResponse(CafeConstants.UNAUTHORIZED_ACCESS), HttpStatus.UNAUTHORIZED);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/get")
@@ -80,7 +80,7 @@ public class ProductController {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/get-by-category/{id}")
@@ -90,7 +90,7 @@ public class ProductController {
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/get-by-id/{id}")
@@ -100,7 +100,8 @@ public class ProductController {
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
 

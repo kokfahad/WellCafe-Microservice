@@ -1,9 +1,7 @@
 package com.fahad.microservice.service;
 
-import org.springframework.http.ResponseEntity;
-
-import java.util.Map;
+import com.fahad.microservice.dto.DashboardDTO;
 
 public interface DashboardService {
-    ResponseEntity<Map<String, Object>> getCount();
+    DashboardDTO getCount();
 }

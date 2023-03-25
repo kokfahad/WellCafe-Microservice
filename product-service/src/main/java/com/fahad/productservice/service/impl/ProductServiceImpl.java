@@ -2,14 +2,16 @@ package com.fahad.productservice.service.impl;
 
 
 import com.fahad.productservice.constent.CafeConstants;
+import com.fahad.productservice.dto.request.DashboardDTO;
+import com.fahad.productservice.dto.response.ProductDtoRes;
+import com.fahad.productservice.feign.BillFeignClient;
+import com.fahad.productservice.mapper.ObjectMapper;
 import com.fahad.productservice.model.Category;
 import com.fahad.productservice.model.Product;
+import com.fahad.productservice.repository.CategoryRepository;
 import com.fahad.productservice.repository.ProductRepository;
 import com.fahad.productservice.service.ProductService;
-import com.fahad.productservice.utils.CafeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,18 +23,27 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    ObjectMapper<Product, ProductDtoRes> objectMapper;
+
+    @Autowired
+    private BillFeignClient billFeignClient;
+
     @Override
-    public ResponseEntity<?> addNewProduct(Map<String, String> requestMap) {
+    public String addNewProduct(Map<String, String> requestMap) {
         try {
             if (validateProductMap(requestMap, false)) {
                 productRepository.save(getProductFromMap(requestMap, false));
-                return CafeUtils.getResponseEntity("Product added successfully", HttpStatus.CREATED);
+                return CafeConstants.Product_Successfully_Created;
             }
-            return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+            return CafeConstants.INVALID_DATA;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
 
@@ -65,18 +76,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<?> getAllProduct() {
+    public List<ProductDtoRes> getAllProduct() {
         try {
             List<Product> productList = productRepository.findAll();
-            return new ResponseEntity<>(productList, HttpStatus.OK);
+            List<ProductDtoRes> productDtoResList = objectMapper.mapAllToDTOList(productList, ProductDtoRes.class);
+            return productDtoResList;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     @Override
-    public ResponseEntity<?> updateProduct(Map<String, String> requestMap) {
+    public String updateProduct(Map<String, String> requestMap) {
         try {
             if (validateProductMap(requestMap, true)) {
                 Optional<Product> productOptional = productRepository.findById(Integer.parseInt(requestMap.get("id")));
@@ -84,39 +96,39 @@ public class ProductServiceImpl implements ProductService {
                     Product product = getProductFromMap(requestMap, true);
                     product.setStatus(productOptional.get().getStatus());
                     productRepository.save(product);
-                    return CafeUtils.getResponseEntity("Product updated successfully !!", HttpStatus.OK);
+                    return CafeConstants.PRODUCT_UPDATED;
                 } else
-                    return CafeUtils.getResponseEntity("Product Id doesn't exist !!", HttpStatus.BAD_REQUEST);
+                    return CafeConstants.PRODUCT_ID_DOES_NOT_EXIST;
             } else {
-                return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                return CafeConstants.INVALID_DATA;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
     @Override
-    public ResponseEntity<?> deleteProduct(Integer id) {
+    public String deleteProduct(Integer id) {
         try {
             if (id != null) {
                 Optional<Product> product = productRepository.findById(id);
                 if (product.isPresent()) {
                     productRepository.deleteById(id);
-                    return CafeUtils.getResponseEntity("Product deleted successfully !!", HttpStatus.OK);
+                    return CafeConstants.PRODUCT_DELETED;
                 } else
-                    return CafeUtils.getResponseEntity("Prdduct Id doesn't exist !!", HttpStatus.BAD_REQUEST);
+                    return CafeConstants.PRODUCT_ID_DOES_NOT_EXIST;
             }
-            return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+            return CafeConstants.INVALID_DATA;
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
     @Override
-    public ResponseEntity<?> updateStatus(Map<String, String> requestMap) {
+    public String updateStatus(Map<String, String> requestMap) {
         try {
             Integer id = Integer.parseInt(requestMap.get("id"));
             if (id != null) {
@@ -125,48 +137,63 @@ public class ProductServiceImpl implements ProductService {
                     product.get().setStatus(requestMap.get("status"));
 //                    productRepository.updateProductStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
                     productRepository.save(product.get());
-                    return CafeUtils.getResponseEntity("Product status updated successfully !!", HttpStatus.OK);
+                    return CafeConstants.PRODUCT_STATUS_UPDATED;
                 } else
-                    return CafeUtils.getResponseEntity("Product id doesn't exist !!", HttpStatus.BAD_REQUEST);
+                    return CafeConstants.PRODUCT_ID_DOES_NOT_EXIST;
             } else
-                return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                return CafeConstants.INVALID_DATA;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
     @Override
-    public ResponseEntity<?> getByCategory(Integer id) {
+    public List<ProductDtoRes> getByCategory(Integer id) {
         try {
             if (id != null) {
                 List<Product> productList = productRepository.findProductsByCategory(id);
                 if (productList.size() > 0) {
-                    return new ResponseEntity<>(productList, HttpStatus.OK);
+                    List<ProductDtoRes> productDtoResList = objectMapper.mapAllToDTOList(productList, ProductDtoRes.class);
+                    return productDtoResList;
                 }
-                return CafeUtils.getResponseEntity("No product found of this category !!", HttpStatus.BAD_REQUEST);
-            } else
-                return CafeUtils.getResponseEntity("Product id doesn't exist", HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     @Override
-    public ResponseEntity<?> getProductById(Integer id) {
+    public ProductDtoRes getProductById(Integer id) {
         try {
             if (id != null) {
                 Optional<Product> product = productRepository.findById(id);
                 if (product.isPresent()) {
-                    return new ResponseEntity<>(product, HttpStatus.OK);
-                } else
-                    return CafeUtils.getResponseEntity("No product found !!", HttpStatus.BAD_REQUEST);
-            } else
-                return CafeUtils.getResponseEntity("Product id doesn't exist !!", HttpStatus.BAD_REQUEST);
+                    ProductDtoRes productDtoRes = objectMapper.copyEntityToDTO(product, ProductDtoRes.class).get();
+                    return productDtoRes;
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
+    }
+
+    @Override
+    public DashboardDTO getDashboardData() {
+        try{
+            DashboardDTO dashboardDTO = new DashboardDTO();
+            String productCount = String.valueOf(productRepository.count());
+            String categoryCount = String.valueOf(categoryRepository.count());
+            dashboardDTO.setProduct(productCount);
+            dashboardDTO.setCategory(categoryCount);
+
+            dashboardDTO = billFeignClient.getTotalBillCount(dashboardDTO);
+            return dashboardDTO;
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

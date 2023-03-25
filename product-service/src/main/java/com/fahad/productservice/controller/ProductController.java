@@ -2,13 +2,13 @@ package com.fahad.productservice.controller;
 
 
 import com.fahad.productservice.constent.CafeConstants;
+import com.fahad.productservice.dto.request.DashboardDTO;
+import com.fahad.productservice.dto.response.ProductDtoRes;
 import com.fahad.productservice.service.ProductService;
-import com.fahad.productservice.utils.CafeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,75 +19,85 @@ public class ProductController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<?> addNewProduct(@RequestBody Map<String, String> requestMap) {
+    public String addNewProduct(@RequestBody Map<String, String> requestMap) {
         try {
             return productService.addNewProduct(requestMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
 
     }
 
 
     @GetMapping("/get")
-    ResponseEntity<?> getAllProduct() {
+    List<ProductDtoRes> getAllProduct() {
         try {
             return productService.getAllProduct();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     @PostMapping("/update")
-    ResponseEntity<?> updateProduct(@RequestBody Map<String, String> requestMap) {
+    String updateProduct(@RequestBody Map<String, String> requestMap) {
         try {
             return productService.updateProduct(requestMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
 
     }
 
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
+    @PostMapping("/delete/{id}")
+    String deleteProduct(@PathVariable Integer id) {
         try {
             return productService.deleteProduct(id);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
     @PostMapping("/updateStatus")
-    public ResponseEntity<?> updateStatus(@RequestBody Map<String, String> requestMap) {
+    public String updateStatus(@RequestBody Map<String, String> requestMap) {
         try {
             return productService.updateStatus(requestMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
     @GetMapping("/get-by-category/{id}")
-    public ResponseEntity<?> getByCategory(@PathVariable("id") Integer id) {
+    public List<ProductDtoRes> getByCategory(@PathVariable("id") Integer id) {
         try {
             return productService.getByCategory(id);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     @GetMapping("/get-by-id/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Integer id) {
+    public ProductDtoRes getProductById(@PathVariable Integer id) {
         try {
             return productService.getProductById(id);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
+    }
+
+    @GetMapping("/get-dashboard-data")
+    public DashboardDTO getDashboardData() {
+        try {
+            return productService.getDashboardData();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

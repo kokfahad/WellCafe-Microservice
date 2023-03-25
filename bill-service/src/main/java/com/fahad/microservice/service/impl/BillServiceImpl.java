@@ -1,6 +1,9 @@
 package com.fahad.microservice.service.impl;
 
 import com.fahad.microservice.constent.CafeConstants;
+import com.fahad.microservice.dto.request.DashboardDTO;
+import com.fahad.microservice.dto.response.BillDtoRes;
+import com.fahad.microservice.mapper.ObjectMapper;
 import com.fahad.microservice.model.Bill;
 import com.fahad.microservice.repository.BillRepository;
 import com.fahad.microservice.service.BillService;
@@ -13,12 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -30,8 +32,11 @@ public class BillServiceImpl implements BillService {
     @Autowired
     private BillRepository billRepository;
 
+    @Autowired
+    ObjectMapper<Bill, BillDtoRes> objectMapper;
+
     @Override
-    public ResponseEntity<?> generateReport(Map<String, Object> requestMap) {
+    public String generateReport(Map<String, Object> requestMap) {
         log.info("Inside generateReport");
         try {
             String fileName;
@@ -74,13 +79,13 @@ public class BillServiceImpl implements BillService {
                         + "Thank you for visiting. Please visit again", getFont("Data"));
                 document.add(footer);
                 document.close();
-                return new ResponseEntity<>("{\"uuid\":\"" + fileName + "\"}", HttpStatus.OK);
+                return "{\"uuid\":\"" + fileName + "\"}";
             }
-            return CafeUtils.getResponseEntity("Required data not found !!", HttpStatus.BAD_REQUEST);
+            return "Required data not found !!";
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
 
@@ -166,46 +171,48 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public ResponseEntity<?> getBills() {
+    public List<BillDtoRes> getBills(Boolean isAdmin, String currentUser) {
         try {
-            ArrayList<Bill> list = new ArrayList<>();
-            if (jwtFilter.isAdmin()) {
+            List<Bill> list = new ArrayList<>();
+            if (isAdmin) {
                 list = billRepository.getAllBills();
-                return new ResponseEntity<>(list, HttpStatus.OK);
+                List<BillDtoRes> billDtoResList = objectMapper.mapAllToDTOList(list, BillDtoRes.class);
+                return billDtoResList;
             } else {
-                list = billRepository.findByCreatedByOrderByIdDesc(jwtFilter.getCurrentUser());
-                return new ResponseEntity<>(list, HttpStatus.OK);
+                list = billRepository.findByCreatedByOrderByIdDesc(currentUser);
+                List<BillDtoRes> billDtoResList = objectMapper.mapAllToDTOList(list, BillDtoRes.class);
+                return billDtoResList;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
 
     }
 
     @Override
-    public ResponseEntity<?> getPDF(Map<String, Object> requestMap) {
+    public byte[] getPDF(Map<String, Object> requestMap) {
         log.info("Inside getPDF");
         log.info("requestMap {}", requestMap);
         try {
             byte[] byteArray = new byte[0];
             if (!requestMap.containsKey("uuid") && validateRequestMap(requestMap)) {
-                return new ResponseEntity<>(byteArray, HttpStatus.BAD_REQUEST);
+                throw new RuntimeException(CafeConstants.INVALID_DATA);
             }
             String filePath = CafeConstants.STORE_LOCATION + "\\" + (String) requestMap.get("uuid") + ".pdf";
             if (CafeUtils.isFileExist(filePath)) {
                 byteArray = getByteArray(filePath);
-                return new ResponseEntity<>(byteArray, HttpStatus.OK);
+                return byteArray;
             } else {
                 requestMap.put("isGenerate", false);
                 generateReport(requestMap);
                 byteArray = getByteArray(filePath);
-                return new ResponseEntity<>(byteArray, HttpStatus.OK);
+                return byteArray;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
 
     }
 
@@ -219,18 +226,30 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public ResponseEntity<?> deleteBill(Integer id) {
+    public String deleteBill(Integer id) {
         try {
             Optional<Bill> bill = billRepository.findById(id);
             if (bill.isPresent()) {
                 billRepository.deleteById(id);
-                return CafeUtils.getResponseEntity("Bill deleted successfully !!", HttpStatus.OK);
-            }
-            return CafeUtils.getResponseEntity("Bill id doesn't exist !!", HttpStatus.BAD_REQUEST);
+                return CafeConstants.BILL_DELETED_SUCCESSFULLY;
+            } else
+                return CafeConstants.INVALID_DATA;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
+    }
+
+    @Override
+    public DashboardDTO getBillsCount(DashboardDTO dashboardDTO) {
+        try {
+            String billsCount = String.valueOf(billRepository.count());
+            dashboardDTO.setBill(billsCount);
+            return dashboardDTO;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
 }

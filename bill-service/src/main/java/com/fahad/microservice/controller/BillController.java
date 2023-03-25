@@ -1,13 +1,13 @@
 package com.fahad.microservice.controller;
 
 import com.fahad.microservice.constent.CafeConstants;
+import com.fahad.microservice.dto.request.DashboardDTO;
+import com.fahad.microservice.dto.response.BillDtoRes;
 import com.fahad.microservice.service.BillService;
-import com.fahad.microservice.utils.CafeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -19,44 +19,55 @@ public class BillController {
     private BillService billService;
 
     @PostMapping("/generate-report")
-    ResponseEntity<?> generateReport(@RequestBody Map<String, Object> requestMap) {
+    String generateReport(@RequestBody Map<String, Object> requestMap) {
         try {
             return billService.generateReport(requestMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
-    @GetMapping("/get-bills")
-    ResponseEntity<?> getBills() {
+    @GetMapping("/get-bills/{isAdmin}/{currentUser}")
+    List<BillDtoRes> getBills(@PathVariable("isAdmin") Boolean isAdmin, @PathVariable("currentUser") String currentUser) {
         try {
-            return billService.getBills();
+            return billService.getBills(isAdmin, currentUser);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     @PostMapping("/getPdf")
-    ResponseEntity<?> getPDF(@RequestBody Map<String, Object> requestMap) {
+    byte[] getPDF(@RequestBody Map<String, Object> requestMap) {
         try {
             return billService.getPDF(requestMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     @PostMapping("/delete/{id}")
-    ResponseEntity<?> deleteBill(@PathVariable Integer id) {
+    String deleteBill(@PathVariable Integer id) {
         try {
             return billService.deleteBill(id);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
+
+    @GetMapping("/get-bill-count")
+    DashboardDTO getBillsCount(@RequestBody DashboardDTO dashboardDTO) {
+        try {
+            return billService.getBillsCount(dashboardDTO);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 }

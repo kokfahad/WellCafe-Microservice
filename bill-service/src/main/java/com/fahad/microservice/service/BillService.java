@@ -1,15 +1,19 @@
 package com.fahad.microservice.service;
 
-import org.springframework.http.ResponseEntity;
+import com.fahad.microservice.dto.request.DashboardDTO;
+import com.fahad.microservice.dto.response.BillDtoRes;
 
+import java.util.List;
 import java.util.Map;
 
 public interface BillService {
-    ResponseEntity<?> generateReport(Map<String, Object> requestMap);
+    String generateReport(Map<String, Object> requestMap);
 
-    ResponseEntity<?> getBills();
+    List<BillDtoRes> getBills(Boolean isAdmin, String currentUser);
 
-    ResponseEntity<?> getPDF(Map<String, Object> requestMap);
+    byte[] getPDF(Map<String, Object> requestMap);
 
-    ResponseEntity<?> deleteBill(Integer id);
+    String deleteBill(Integer id);
+
+    DashboardDTO getBillsCount(DashboardDTO dashboardDTO);
 }

@@ -1,34 +1,22 @@
 package com.fahad.microservice.service.impl;
 
+import com.fahad.microservice.dto.DashboardDTO;
+import com.fahad.microservice.feign.ProductFeignClient;
 import com.fahad.microservice.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class DashboardImpl implements DashboardService {
-
     @Autowired
-    private CategoryRepository categoryRepository;
+    private ProductFeignClient productFeignClient;
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private BillRepository billRepository;
 
     @Override
-    public ResponseEntity<Map<String, Object>> getCount() {
+    public DashboardDTO getCount() {
         try {
-            Map<String, Object> map = new HashMap<>();
-            map.put("category", categoryRepository.count());
-            map.put("product", productRepository.count());
-            map.put("bill", billRepository.count());
-            return new ResponseEntity<>(map, HttpStatus.OK);
+           DashboardDTO dashboardDTO = productFeignClient.getProductDashboardData();
+           return dashboardDTO;
         }catch (Exception ex){
             ex.printStackTrace();
         }
