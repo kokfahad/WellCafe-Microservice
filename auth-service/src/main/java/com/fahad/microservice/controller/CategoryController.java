@@ -1,9 +1,9 @@
-package com.fahad.productservice.controller;
+package com.fahad.microservice.controller;
 
 
-import com.fahad.productservice.constent.CafeConstants;
-import com.fahad.productservice.service.CategoryService;
-import com.fahad.productservice.utils.CafeUtils;
+import com.fahad.microservice.constent.CafeConstants;
+import com.fahad.microservice.dto.ErrorResponse;
+import com.fahad.microservice.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class CategoryController {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/get")
@@ -35,7 +35,7 @@ public class CategoryController {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/update")
@@ -45,6 +45,6 @@ public class CategoryController {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse(CafeConstants.SOMETHING_WENT_WRONG), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
