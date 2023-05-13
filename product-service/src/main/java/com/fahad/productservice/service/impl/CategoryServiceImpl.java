@@ -2,14 +2,13 @@ package com.fahad.productservice.service.impl;
 
 
 import com.fahad.productservice.constent.CafeConstants;
+import com.fahad.productservice.dto.response.CategoryDtoRes;
+import com.fahad.productservice.mapper.ObjectMapper;
 import com.fahad.productservice.model.Category;
 import com.fahad.productservice.repository.CategoryRepository;
 import com.fahad.productservice.service.CategoryService;
-import com.fahad.productservice.utils.CafeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,23 +21,25 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    ObjectMapper<Category, CategoryDtoRes> objectMapper;
 
 
     @Override
-    public ResponseEntity<?> addNewCategory(Map<String, String> requestMap) {
+    public String addNewCategory(Map<String, String> requestMap) {
         try {
             if (validateCategoryMap(requestMap, false)) {
                 categoryRepository.save(getCategoryFromMap(requestMap, false));
-                return CafeUtils.getResponseEntity("Category added successfully !!", HttpStatus.CREATED);
+                return CafeConstants.CATEGORY_ADDED;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
     @Override
-    public ResponseEntity<?> getAllCategory(String filterValue) {
+    public List<CategoryDtoRes> getAllCategory(String filterValue) {
         try {
 //            if (!Strings.isNullOrEmpty(filterValue) && filterValue.equalsIgnoreCase("true")){
 //                //will fix this code later
@@ -46,11 +47,12 @@ public class CategoryServiceImpl implements CategoryService {
 //                return new ResponseEntity<List<Category>>( categoryList,HttpStatus.OK);
 //            }
             List<Category> categoryList = categoryRepository.findAll();
-            return new ResponseEntity<>(categoryList, HttpStatus.OK);
+            List<CategoryDtoRes> categoryDtoResList = objectMapper.mapAllToDTOList(categoryList, CategoryDtoRes.class);
+            return categoryDtoResList;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     private boolean validateCategoryMap(Map<String, String> requestMap, boolean validateId) {
@@ -75,21 +77,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<?> updateCategory(Map<String, String> requestMap) {
+    public String updateCategory(Map<String, String> requestMap) {
         try {
             if (validateCategoryMap(requestMap, false)) {
                 Optional<Category> category = categoryRepository.findById(Integer.parseInt(requestMap.get("id")));
                 if (category.isPresent()) {
                     categoryRepository.save(getCategoryFromMap(requestMap, true));
-                    return CafeUtils.getResponseEntity("Category updated successfully", HttpStatus.OK);
+                    return CafeConstants.CATEGORY_UPDATED;
                 } else {
-                    return CafeUtils.getResponseEntity("Category Id does not exist !!", HttpStatus.OK);
+                    return CafeConstants.CATEGORY_ID_DOES_NOT_EXIST;
                 }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
 

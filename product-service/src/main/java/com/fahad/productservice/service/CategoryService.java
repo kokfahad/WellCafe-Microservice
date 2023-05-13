@@ -1,11 +1,12 @@
 package com.fahad.productservice.service;
 
-import org.springframework.http.ResponseEntity;
+import com.fahad.productservice.dto.response.CategoryDtoRes;
 
+import java.util.List;
 import java.util.Map;
 
 public interface CategoryService {
-    ResponseEntity<?> addNewCategory(Map<String, String> requestMap);
-    ResponseEntity<?> getAllCategory(String filterValue);
-    ResponseEntity<?> updateCategory(Map<String, String> requestMap);
+    String addNewCategory(Map<String, String> requestMap);
+    List<CategoryDtoRes> getAllCategory(String filterValue);
+    String updateCategory(Map<String, String> requestMap);
 }

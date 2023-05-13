@@ -2,13 +2,12 @@ package com.fahad.productservice.controller;
 
 
 import com.fahad.productservice.constent.CafeConstants;
+import com.fahad.productservice.dto.response.CategoryDtoRes;
 import com.fahad.productservice.service.CategoryService;
-import com.fahad.productservice.utils.CafeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,32 +18,32 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/add")
-    ResponseEntity<?> addNewCategory(@RequestBody Map<String, String> requestMap) {
+    String addNewCategory(@RequestBody Map<String, String> requestMap) {
         try {
             return categoryService.addNewCategory(requestMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
     @GetMapping("/get")
-    ResponseEntity<?> getAllCategory(@RequestParam(required = false) String filterValue) {
+    List<CategoryDtoRes> getAllCategory(@RequestParam(required = false) String filterValue) {
         try {
             return categoryService.getAllCategory(filterValue);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return null;
     }
 
     @PostMapping("/update")
-    ResponseEntity<?> updateCategory(@RequestBody Map<String, String> requestMap) {
+    String updateCategory(@RequestBody Map<String, String> requestMap) {
         try {
             return categoryService.updateCategory(requestMap);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeConstants.SOMETHING_WENT_WRONG;
     }
 }

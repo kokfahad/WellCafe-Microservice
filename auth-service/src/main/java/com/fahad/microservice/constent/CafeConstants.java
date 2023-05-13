@@ -14,5 +14,7 @@ public class CafeConstants {
     public static final String PRODUCT_STATUS_UPDATED= "Product status updated successfully !!";
     public static final String BILL_DELETED_SUCCESSFULLY = "Bill deleted successfully !!";
     public static final String Product_ID_DOESNT_EXIST= "Product Id does not exist !!";
-
+    public static final String CATEGORY_ADDED = "Category added successfully !!";
+    public static final String CATEGORY_UPDATED = "Category updated successfully !!";
+    public static final String CATEGORY_ID_DOES_NOT_EXIST = "Category Id does not exist !!";
 }

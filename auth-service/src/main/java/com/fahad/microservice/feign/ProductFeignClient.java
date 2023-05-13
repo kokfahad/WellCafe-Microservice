@@ -1,5 +1,6 @@
 package com.fahad.microservice.feign;
 
+import com.fahad.microservice.dto.response.CategoryDtoRes;
 import com.fahad.microservice.dto.response.ProductDtoRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,15 @@ public interface ProductFeignClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/product/get-by-id/{id}")
     ProductDtoRes getProductById(@PathVariable("id") Integer id);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/api/category/get")
+    List<CategoryDtoRes> getAllCategory();
+
+    @RequestMapping(method = RequestMethod.POST, value = "/api/category/add", consumes = "application/json")
+    String addNewCategory(@RequestBody Map<String, String> requestMap);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/api/category/update", consumes = "application/json")
+    String updateCategory(@RequestBody Map<String, String> requestMap);
 
 
 }
