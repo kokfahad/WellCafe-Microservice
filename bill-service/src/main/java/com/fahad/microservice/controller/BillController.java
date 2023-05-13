@@ -58,7 +58,7 @@ public class BillController {
         return CafeConstants.SOMETHING_WENT_WRONG;
     }
 
-    @GetMapping("/get-bill-count")
+    @PostMapping("/get-bill-count")
     DashboardDTO getBillsCount(@RequestBody DashboardDTO dashboardDTO) {
         try {
             return billService.getBillsCount(dashboardDTO);

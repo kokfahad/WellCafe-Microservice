@@ -9,6 +9,6 @@ public class CafeConstants {
     public static final String UNAUTHORIZED_ACCESS = "You don't have access !!";
 
     // public static final String STORE_LOCATION = "/Users/fahadkhan/Downloads/cafeteria/static-files/pdf";
-    public static final String STORE_LOCATION = "D:\\Microservice\\Cafeteria-Microservice\\Cafeteria-modularized-microservice--main\\bill-service\\src\\main\\java\\com\\fahad\\microservice\\static-files";
+    public static final String STORE_LOCATION = "C:\\Users\\ASUS\\Desktop\\New folder\\static-file";
 
 }
